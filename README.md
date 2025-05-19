@@ -63,9 +63,9 @@ This project involves designing and implementing an intelligent artificial nest 
 - Annual full system diagnostic
 
 ## Contributors
--Alex Massyn (MSSALE009) - Hardware and Mechanical Subsystem
--Kival Maharaj (MHRKIV001) - Penguin Presence Detection Subsystem
--Mitra Ramchuran (RMCMIT001) - Threat Detection and Monitoring Subsystem
+- Alex Massyn (MSSALE009) - Hardware and Mechanical Subsystem
+- Kival Maharaj (MHRKIV001) - Penguin Presence Detection Subsystem
+- Mitra Ramchuran (RMCMIT001) - Threat Detection and Monitoring Subsystem
 
 ## License
 This conservation technology project is licensed under the [GNU GPLv3 License](LICENSE.md) to encourage open collaboration in wildlife protection efforts.
