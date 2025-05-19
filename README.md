@@ -59,7 +59,6 @@ This project involves designing and implementing an intelligent artificial nest 
 ### Maintenance
 - Monthly camera lens cleaning
 - Bi-monthly mechanical component inspection
-- Quarterly battery replacement
 - Annual full system diagnostic
 
 ## Contributors
