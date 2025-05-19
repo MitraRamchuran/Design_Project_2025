@@ -25,8 +25,8 @@ This project involves designing and implementing an intelligent artificial nest 
 ## Subsystem Requirements
 
 ### Threat Detection Subsystem
-- Detect movement within 3-meter radius of nest
-- Classify predators with >90% accuracy
+- Detect movement within 5-meter radius of nest
+- Classify predators with >75% accuracy
 - Transmit alerts within 2 seconds of detection
 - Operate in various lighting conditions (0-100,000 lux)
 
@@ -63,10 +63,9 @@ This project involves designing and implementing an intelligent artificial nest 
 - Annual full system diagnostic
 
 ## Contributors
-- [Team Member 1](github-profile-link) - Threat Detection Subsystem
-- [Team Member 2](github-profile-link) - Penguin Identification 
-- [Team Member 3](github-profile-link) - Nest Protection Design
-- [Team Member 4](github-profile-link) - Systems Integration
+-Alex Massyn (MSSALE009) - Hardware and Mechanical Subsystem
+-Kival Maharaj (MHRKIV001) - Penguin Presence Detection Subsystem
+-Mitra Ramchuran (RMCMIT001) - Threat Detection and Monitoring Subsystem
 
 ## License
 This conservation technology project is licensed under the [GNU GPLv3 License](LICENSE.md) to encourage open collaboration in wildlife protection efforts.
