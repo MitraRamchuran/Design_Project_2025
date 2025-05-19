@@ -68,7 +68,7 @@ This project involves designing and implementing an intelligent artificial nest 
 - Mitra Ramchuran (RMCMIT001) - Threat Detection and Monitoring Subsystem
 
 ## License
-This conservation technology project is licensed under the [GNU GPLv3 License](LICENSE.md) to encourage open collaboration in wildlife protection efforts.
+This conservation technology project is licensed under the LICENSE to encourage open collaboration in wildlife protection efforts.
 
 ---
 
