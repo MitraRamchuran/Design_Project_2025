@@ -1,0 +1,128 @@
+#include <Servo.h>
+
+// Pin definitions
+#define SENSOR_A_PIN 2          // IR Sensor A (outside the nest)
+#define SENSOR_B_PIN 3          // IR Sensor B (inside the nest)
+#define PREDATOR_PIN 4          // Input from Camera Subsystem (HIGH = predator detected)
+#define SERVO_PIN 6             // Servo motor control pin
+
+Servo doorServo;
+
+// State flags
+bool dangerMode = false;                      // Flag to track if predator mode is active
+unsigned long lastSensorTriggerTime = 0;      // Timer to track last penguin presence
+unsigned long bothSensorsTriggeredTime = 0;   // Timer for dual sensor-triggered door hold
+
+// Timing constants
+const unsigned long doorCloseDelay = 5000;        // Time to wait before closing door after last sensor trigger
+const unsigned long bothSensorHoldTime = 10000;   // Time to keep door open when both sensors are triggered
+
+// Movement state machine for direction detection
+enum MovementState { IDLE, A_TRIGGERED, B_TRIGGERED };
+MovementState movementState = IDLE;
+unsigned long movementStartTime = 0;
+const unsigned long directionTimeout = 2000;       // Max time between first and second sensor trigger for direction logic
+
+void setup() {
+  Serial.begin(9600);
+
+  // Configure sensor inputs with internal pull-up resistors
+  pinMode(SENSOR_A_PIN, INPUT_PULLUP);
+  pinMode(SENSOR_B_PIN, INPUT_PULLUP);
+  pinMode(PREDATOR_PIN, INPUT);
+
+  // Attach servo motor
+  doorServo.attach(SERVO_PIN);
+
+  // Start with the door open by default
+  openDoor();
+
+  Serial.println("System initialized. Door is open.");
+}
+
+void loop() {
+  // Read sensor and predator input states
+  bool sensorA = digitalRead(SENSOR_A_PIN) == LOW;      // LOW = object detected
+  bool sensorB = digitalRead(SENSOR_B_PIN) == LOW;
+  bool predatorDetected = digitalRead(PREDATOR_PIN) == HIGH;
+
+  // If a predator is detected, enter danger mode and close the door immediately
+  if (predatorDetected && !dangerMode) {
+    Serial.println("Predator detected. Entering danger mode.");
+    dangerMode = true;
+    closeDoor();
+  }
+
+  // --- Danger Mode Logic ---
+  if (dangerMode) {
+    // --- Direction Detection ---
+    if (movementState == IDLE) {
+      if (sensorA && !sensorB) {
+        movementState = A_TRIGGERED;
+        movementStartTime = millis();
+      } else if (sensorB && !sensorA) {
+        movementState = B_TRIGGERED;
+        movementStartTime = millis();
+      }
+    } else if (movementState == A_TRIGGERED) {
+      if (sensorB) {
+        Serial.println("ENTRY");  // Sensor A triggered before B
+        movementState = IDLE;
+      } else if (millis() - movementStartTime > directionTimeout) {
+        movementState = IDLE;     // Timeout: discard partial detection
+      }
+    } else if (movementState == B_TRIGGERED) {
+      if (sensorA) {
+        Serial.println("EXIT");   // Sensor B triggered before A
+        movementState = IDLE;
+      } else if (millis() - movementStartTime > directionTimeout) {
+        movementState = IDLE;     // Timeout: discard partial detection
+      }
+    }
+
+    // --- Door Control in Danger Mode ---
+    if (sensorA && sensorB) {
+      // Both sensors triggered → penguin in doorway
+      openDoor();
+      bothSensorsTriggeredTime = millis();  // Start 10-second hold timer
+    } else if (sensorA || sensorB) {
+      // One sensor triggered → penguin entering/exiting
+      openDoor();
+      lastSensorTriggerTime = millis();     // Reset inactivity timer
+    }
+
+    // Check if 10-second dual-trigger hold is active
+    if (bothSensorsTriggeredTime > 0) {
+      if (millis() - bothSensorsTriggeredTime < bothSensorHoldTime) {
+        // Still holding door open
+      } else {
+        bothSensorsTriggeredTime = 0;                     // Reset dual-trigger hold
+        lastSensorTriggerTime = millis();                 // Fall back to normal close delay
+      }
+    }
+
+    // If no sensors triggered and timeout elapsed, close the door
+    if (!sensorA && !sensorB && bothSensorsTriggeredTime == 0 &&
+        millis() - lastSensorTriggerTime > doorCloseDelay) {
+      closeDoor();
+    }
+
+  } else {
+    // --- Normal Mode (no predator): Door remains open ---
+    openDoor();
+  }
+
+  delay(100);  // Small delay to reduce CPU load and debounce
+}
+
+// Servo control helper functions
+void openDoor() {
+  doorServo.write(90);  // Adjust as needed for your servo
+  Serial.println("Door opened.");
+}
+
+void closeDoor() {
+  doorServo.write(0);   // Adjust as needed for your servo
+  Serial.println("Door closed.");
+}
+
