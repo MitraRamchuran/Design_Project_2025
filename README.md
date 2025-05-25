@@ -1,8 +1,6 @@
 # EEE4113F 2025
 # Penguin Nest Protection System
 
-*Concept image of the artificial nest system*
-
 This project involves designing and implementing an intelligent artificial nest system to protect endangered African penguin eggs from predators. The system combines three integrated subsystems: threat detection, penguin identification, and automated nest protection.
 
 ## Project Structure
